@@ -1,4 +1,4 @@
-package flixel.shaders;
+package;
 
 import grafex.states.playstate.PlayState;
 import flixel.system.FlxAssets.FlxShader;
