@@ -142,7 +142,8 @@ class MainMenuState extends MusicBeatState
 	        var mchar:FlxSprite = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/' + optionShit));
 		mchar.scrollFactor.set(0, 0);
 		menuItems.add(mchar);
-		
+		return menuItem;
+	
 		switch (i)
 		{
 			case 0: 
