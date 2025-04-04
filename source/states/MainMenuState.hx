@@ -146,14 +146,14 @@ class MainMenuState extends MusicBeatState
 		switch (i)
 		{
 			case 0: 
-        		        menuItem.y = 269;
+        		        menuItem.y = 269‎;
 				menuItem.x = 241;
 			case 1: 
 				menuItem.y = 269;
-				menuItem.x = 269;
+				menuItem.x = 482;
 			case 2:
 				menuItem.y = 269;
-				menuItem.x = 702;
+				menuItem.x = 723;
 		}
 	}
 
