@@ -85,5 +85,8 @@ import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.addons.transition.FlxTransitionableState;
 
+//shaders
+import Shaders.*;
+
 using StringTools;
 #end
