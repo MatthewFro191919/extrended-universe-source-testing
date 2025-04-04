@@ -140,9 +140,8 @@ class PlayMenuState extends MusicBeatState
 	        menuItem.updateHitbox();
 
 		switch (i)
-		{
 			case 0: 
-        		        menuItem.y = 912‎;
+        		        menuItem.y = 912;
 				menuItem.x = 257;
 			case 1: 
 				menuItem.y = 912;
