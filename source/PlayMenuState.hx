@@ -1,4 +1,4 @@
-package;
+package states;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -22,16 +22,17 @@ class PlayMenuState extends MusicBeatState
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
+	var char:FlxSprite;
 	var leftItem:FlxSprite;
 	var rightItem:FlxSprite;
 
 	//Centered/Text options
 	var optionShit:Array<String> = [
-         	'extrended',
-		'golden',
-		'daveandbambi'
+		#if MODS_ALLOWED 'mods', #end
+		#if DISCORD_ALLOWED 'discord', #end
+		'credits'
 	];
-
+    
 	var leftOption:String = #if ACHIEVEMENTS_ALLOWED 'achievements' #else null #end;
 	var rightOption:String = 'options';
 
@@ -56,7 +57,6 @@ class PlayMenuState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/space'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.scrollFactor.set(0, yScroll);
-		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
@@ -64,13 +64,13 @@ class PlayMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/space'));
+		magenta = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/space'));
 		magenta.scrollFactor.set(0, yScroll);
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		add(magenta);
 
-		var magenta2 = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/uhhh'));
+		var magenta2 = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/thing'));
 		magenta2.scrollFactor.set(0, yScroll);
 		magenta2.updateHitbox();
 		magenta2.screenCenter();
@@ -124,23 +124,33 @@ class PlayMenuState extends MusicBeatState
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
 	{
-		var extrendedbutton:FlxSprite = new FlxSprite(912, 257).loadGraphic(Paths.image('mainmenu/extrended')); //Thanks to EIT for the tutorial
-		extrendedbutton.scrollFactor.set(0, 0);
-		extrendedbutton.setGraphicSize(Std.int(extrendedbutton.width * 0.9));
-		extrendedbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(extrendedbutton);
+	        var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
+	        var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
+	        menuItem.scale.x = scale;
+	        menuItem.scale.y = scale;
+	        menuItem = Paths.image('mainmenu/' + optionShit[i]);
+	        menuItem.ID = i;
+	        menuItem.screenCenter(X);
+	        menuItems.add(menuItem);
+	        var scr:Float = (optionShit.length - 4) * 0.135;
+	        if(optionShit.length < 6) scr = 0;
+	        menuItem.scrollFactor.set(0, scr);
+	        menuItem.antialiasing = ClientPrefs.globalAntialiasing;
+	        //menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
+	        menuItem.updateHitbox();
 
-		var goldenbutton:FlxSprite = new FlxSprite(912, 462).loadGraphic(Paths.image('mainmenu/golden')); //Thanks to EIT for the tutorial
-		goldenbutton.scrollFactor.set(0, 0);
-		goldenbutton.setGraphicSize(Std.int(goldenbutton.width * 0.9));
-		goldenbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(goldenbutton);
-						
-		var davbambutton:FlxSprite = new FlxSprite(912, 462).loadGraphic(Paths.image('mainmenu/daveandbambibutton')); //Thanks to EIT for the tutorial
-		davbambutton.scrollFactor.set(0, 0);
-		davbambutton.setGraphicSize(Std.int(davbambutton.width * 0.9));
-		davbambutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(davbambutton);
+		switch (i)
+		{
+			case 0: 
+        		        menuItem.y = 912‎‎;
+				menuItem.x = 257;
+			case 1: 
+				menuItem.y = 912‎;
+				menuItem.x = 514;
+			case 2:
+				menuItem.y = 912‎;
+				menuItem.x = 771;
+		}
 	}
 
 	var selectedSomethin:Bool = false;
@@ -262,7 +272,7 @@ class PlayMenuState extends MusicBeatState
 				selectedSomethin = true;
 				FlxG.mouse.visible = false;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				MusicBeatState.switchState(new states.MainMenuState());
+				MusicBeatState.switchState(new TitleState());
 			}
 
 			if (controls.ACCEPT || (FlxG.mouse.overlaps(menuItems, FlxG.camera) && FlxG.mouse.justPressed && allowMouse))
@@ -297,6 +307,36 @@ class PlayMenuState extends MusicBeatState
 					{
 						switch (option)
 						{
+							case 'play':
+								FlxG.switchState(new PlayMenuState());
+							case 'extras':
+								FlxG.switchState(new ExtrasMenuState());
+							case 'story_mode':
+								MusicBeatState.switchState(new StoryMenuState());
+							case 'freeplay':
+								MusicBeatState.switchState(new FreeplayState());
+
+							#if MODS_ALLOWED
+							case 'mods':
+								MusicBeatState.switchState(new ModsMenuState());
+							#end
+
+							#if ACHIEVEMENTS_ALLOWED
+							case 'achievements':
+								MusicBeatState.switchState(new AchievementsMenuState());
+							#end
+
+							case 'credits':
+								MusicBeatState.switchState(new CreditsState());
+							case 'options':
+								MusicBeatState.switchState(new OptionsState());
+								OptionsState.onPlayState = false;
+								if (PlayState.SONG != null)
+								{
+									PlayState.SONG.arrowSkin = null;
+									PlayState.SONG.splashSkin = null;
+									PlayState.stageUI = 'normal';
+								}
 							case 'extrended':
 								MusicBeatState.switchState(new states.FreeplayState());
 								PlayState.isUniverse = true;
@@ -324,7 +364,7 @@ class PlayMenuState extends MusicBeatState
 				selectedSomethin = true;
 				FlxG.mouse.visible = false;
 				MusicBeatState.switchState(new states.FreeplayState());
-			        PlayState.isSecret = true;
+			    PlayState.isSecret = true;
 			}
 		}
 
