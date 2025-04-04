@@ -124,30 +124,37 @@ class MainMenuState extends MusicBeatState
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
 	{
-		var playbutton:FlxSprite = new FlxSprite(269, 241).loadGraphic(Paths.image('mainmenu/play')); //Thanks to EIT for the tutorial
-		var scr:Float = (optionShit.length - 4) * 0.135;
-		if(optionShit.length < 6) scr = 0;
-		playbutton.scrollFactor.set(0, scr);
-		playbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(playbutton);
+	        var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
+	        var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
+	        menuItem.scale.x = scale;
+	        menuItem.scale.y = scale;
+	        menuItem = Paths.image('mainmenu/' + optionShit[i]);
+	        menuItem.ID = i;
+	        menuItem.screenCenter(X);
+	        menuItems.add(menuItem);
+	        var scr:Float = (optionShit.length - 4) * 0.135;
+	        if(optionShit.length < 6) scr = 0;
+	        menuItem.scrollFactor.set(0, scr);
+	        menuItem.antialiasing = ClientPrefs.globalAntialiasing;
+	        //menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
+	        menuItem.updateHitbox();
 
-		var extrasbutton:FlxSprite = new FlxSprite(269, 482).loadGraphic(Paths.image('mainmenu/extras')); //Thanks to EIT for the tutorial
-		var scr:Float = (optionShit.length - 4) * 0.135;
-		if(optionShit.length < 6) scr = 0;
-		extrasbutton.scrollFactor.set(0, scr);
-		extrasbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(extrasbutton);
-
-		var optionsbutton:FlxSprite = new FlxSprite(269, 702).loadGraphic(Paths.image('mainmenu/options')); //Thanks to EIT for the tutorial
-		var scr:Float = (optionShit.length - 4) * 0.135;
-		if(optionShit.length < 6) scr = 0;
-		optionsbutton.scrollFactor.set(0, scr);
-		optionsbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(optionsbutton);
-
-	        var mchar:FlxSprite = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/$name'));
+	        var mchar:FlxSprite = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/' + optionShit));
 		mchar.scrollFactor.set(0, 0);
 		add(mchar);
+		
+		switch (i)
+		{
+			case 0: 
+        			menuItem.y = 269‎;
+				menuItem.x = 241;
+			case 1: 
+				menuItem.y = 269;
+				menuItem.x = 269;
+			case 2:
+				menuItem.y = 269;
+				menuItem.x = 702;
+		}
 	}
 
 	var selectedSomethin:Bool = false;
