@@ -1,4 +1,4 @@
-package;
+package states;
 
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -8,8 +8,7 @@ import states.editors.MasterEditorMenu;
 import options.OptionsState;
 import backend.MusicBeatState;
 
-enum ExtrasMenuColumn
-{
+enum ExtrasMenuColumn {
 	LEFT;
 	CENTER;
 	RIGHT;
@@ -19,7 +18,7 @@ class ExtrasMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '1.0-prerelease'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
-	public static var curColumn:ExtrasMenuColumn = LEFT;
+	public static var curColumn:MainMenuColumn = LEFT;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -33,7 +32,7 @@ class ExtrasMenuState extends MusicBeatState
 		#if DISCORD_ALLOWED 'discord', #end
 		'credits'
 	];
-
+    
 	var leftOption:String = #if ACHIEVEMENTS_ALLOWED 'achievements' #else null #end;
 	var rightOption:String = 'options';
 
@@ -58,7 +57,6 @@ class ExtrasMenuState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/space'));
 		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.scrollFactor.set(0, yScroll);
-		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
@@ -66,13 +64,13 @@ class ExtrasMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		magenta = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/space'));
+		magenta = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/space'));
 		magenta.scrollFactor.set(0, yScroll);
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		add(magenta);
 
-		var magenta2 = new FlxSprite(-80).loadGraphic(Paths.image('backgrounds/thing'));
+		var magenta2 = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/thing'));
 		magenta2.scrollFactor.set(0, yScroll);
 		magenta2.updateHitbox();
 		magenta2.screenCenter();
@@ -126,24 +124,37 @@ class ExtrasMenuState extends MusicBeatState
 
 	function createMenuItem(name:String, x:Float, y:Float):FlxSprite
 	{
-		var modsbutton:FlxSprite = new FlxSprite(269, 241).loadGraphic(Paths.image('mainmenu/mods'));//Thanks to EIT for the tutoria
-		modsbutton.scrollFactor.set(0, 0);
-		modsbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(modsbutton);
+	        var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
+	        var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
+	        menuItem.scale.x = scale;
+	        menuItem.scale.y = scale;
+	        menuItem = Paths.image('mainmenu/' + optionShit[i]);
+	        menuItem.ID = i;
+	        menuItem.screenCenter(X);
+	        menuItems.add(menuItem);
+	        var scr:Float = (optionShit.length - 4) * 0.135;
+	        if(optionShit.length < 6) scr = 0;
+	        menuItem.scrollFactor.set(0, scr);
+	        menuItem.antialiasing = ClientPrefs.globalAntialiasing;
+	        //menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
+	        menuItem.updateHitbox();
 
-		var discordbutton:FlxSprite = new FlxSprite(269, 482).loadGraphic(Paths.image('mainmenu/discord'));//Thanks to EIT for the tutorial
-		discordbutton.scrollFactor.set(0, 0);
-		discordbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(discordbutton);
-
-		var creditsbutton:FlxSprite = new FlxSprite(269, 702).loadGraphic(Paths.image('mainmenu/credits'));//Thanks to EIT for the tutorial
-		creditsbutton.scrollFactor.set(0, 0);
-		creditsbutton.flipX = false; //You should have already animated it in the right position in Animate
-		add(creditsbutton);
-
-	        var mchar:FlxSprite = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/$name'));
+	        var mchar:FlxSprite = new FlxSprite(238, 199).loadGraphic(Paths.image('backgrounds/' + optionShit));
 		mchar.scrollFactor.set(0, 0);
 		add(mchar);
+		
+		switch (i)
+		{
+			case 0: 
+        		        menuItem.y = 269‎;
+				menuItem.x = 241;
+			case 1: 
+				menuItem.y = 269;
+				menuItem.x = 269;
+			case 2:
+				menuItem.y = 269;
+				menuItem.x = 702;
+		}
 	}
 
 	var selectedSomethin:Bool = false;
@@ -265,7 +276,7 @@ class ExtrasMenuState extends MusicBeatState
 				selectedSomethin = true;
 				FlxG.mouse.visible = false;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
-				MusicBeatState.switchState(new states.MainMenuState());
+				MusicBeatState.switchState(new TitleState());
 			}
 
 			if (controls.ACCEPT || (FlxG.mouse.overlaps(menuItems, FlxG.camera) && FlxG.mouse.justPressed && allowMouse))
@@ -305,22 +316,22 @@ class ExtrasMenuState extends MusicBeatState
 							case 'extras':
 								FlxG.switchState(new ExtrasMenuState());
 							case 'story_mode':
-								MusicBeatState.switchState(new states.StoryMenuState());
+								MusicBeatState.switchState(new StoryMenuState());
 							case 'freeplay':
-								MusicBeatState.switchState(new states.FreeplayState());
+								MusicBeatState.switchState(new FreeplayState());
 
 							#if MODS_ALLOWED
 							case 'mods':
-								MusicBeatState.switchState(new states.ModsMenuState());
+								MusicBeatState.switchState(new ModsMenuState());
 							#end
 
 							#if ACHIEVEMENTS_ALLOWED
 							case 'achievements':
-								MusicBeatState.switchState(new states.AchievementsMenuState());
+								MusicBeatState.switchState(new AchievementsMenuState());
 							#end
 
 							case 'credits':
-								MusicBeatState.switchState(new states.CreditsState());
+								MusicBeatState.switchState(new CreditsState());
 							case 'options':
 								MusicBeatState.switchState(new OptionsState());
 								OptionsState.onPlayState = false;
