@@ -18,7 +18,7 @@ class MainMenuState extends MusicBeatState
 {
 	public static var psychEngineVersion:String = '1.0-prerelease'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
-	public static var i:Float;
+	public static var i:Int = 0;
 	public static var curColumn:MainMenuColumn = LEFT;
 	var allowMouse:Bool = true; //Turn this off to block mouse movement in menus
 
@@ -123,7 +123,7 @@ class MainMenuState extends MusicBeatState
 		FlxG.camera.follow(camFollow, null, 0.15);
 	}
 
-	function createMenuItem(name:String, x:Float, y:Float, scale:Float):FlxSprite
+	function createMenuItem(name:String, x:Float, y:Float, scale:Int = 0):FlxSprite
 	{
 	        var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
 	        var menuItem:FlxSprite = new FlxSprite(0, (i * 140)  + offset);
